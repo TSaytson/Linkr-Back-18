@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt';
-import { findUser } from "../repositories/login.repository.js";
+import { loginRepository } from "../repositories/login.repository.js";
 
 export async function validateSignUp(req, res, next) {
     const { username, email, password, picture } = req.body;
 
     try {
         const userFound =
-            await findUser(email);
+            await loginRepository.findUser(email);
         if (userFound)
             return res.status(409).
                 send('Usuário já cadastrado');
@@ -33,7 +33,7 @@ export async function validateSignIn(req, res, next) {
 
     try {
         const userFound =
-            await findUser(email);
+            await loginRepository.findUser(email);
 
         if (userFound &&
             bcrypt.compareSync(
@@ -43,7 +43,7 @@ export async function validateSignIn(req, res, next) {
 
         else
             return res.status(401).
-                send('Credenciais incorretas');
+                send({message:'Credenciais incorretas'});
 
     } catch (error) {
         console.log(error);
